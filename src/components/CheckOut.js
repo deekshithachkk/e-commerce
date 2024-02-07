@@ -1,85 +1,68 @@
 // Checkout.js
 
-import React, { useState } from 'react';
-import DeliveryOption from './DeliveryOptions';
+import React, { useState,useContext } from "react";
+import BillingForm from "./BillingForm";
+import { useNavigate } from "react-router-dom";
+import { UserContext } from "../context/AuthContext";
+import { alertPopUp, billingFormError, orderSuccess } from "../helper";
+import Title from './Title';
 
-const Checkout = () => {
-  const [selectedDelivery, setSelectedDelivery] = useState('');
+
+const Checkout = ({ orderItems }) => {
+  const {userData}=useContext(UserContext);
+  const navigate=useNavigate()
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [cartItems, setCartItems] = useState([
-    { id: 1, name: 'Product 1', price: 20 },
-    // Add more initial cart items as needed
-  ]);
-
-  const handleSelectDelivery = (option) => {
-    setSelectedDelivery(option);
-  };
+  const total = orderItems.reduce((acu, current) => acu + current.total, 0);
 
   const handleAuthentication = () => {
     // Assume a successful authentication for simplicity
     setIsAuthenticated(true);
   };
   const handleLogin = () => {
-    // Perform login logic
-    // If login is successful, set isAuthenticated to true
-    setIsAuthenticated(true);
+    // setIsAuthenticated(true);
+
+    if(Object.keys(userData?.billingData).length>0)
+    {
+      navigate('/signIn')
+    }
+    else
+    {
+      alertPopUp(billingFormError)
+    }
+
   };
 
   const handleCheckout = () => {
-    if (!selectedDelivery) {
-      console.error('Please select a delivery option.');
-      return;
+    if(Object.keys(userData?.billingData).length>0)
+    {
+      alertPopUp(orderSuccess)
     }
-
-    if (!isAuthenticated) {
-      console.error('Please authenticate before proceeding to checkout.');
-      // Redirect to login or show a modal for authentication
-      return;
+    else
+    {
+      alertPopUp(billingFormError)
     }
-
-    if (cartItems.length === 0) {
-      console.error('Your cart is empty. Add items before checking out.');
-      return;
-    }
-
-    // Calculate total amount based on cart items
-    const totalAmount = cartItems.reduce((sum, item) => sum + item.price, 0);
-
-    // Perform checkout logic, e.g., interact with a backend API
-    console.log('Processing checkout...');
-    console.log('Selected Delivery Option:', selectedDelivery);
-    console.log('User Authenticated:', isAuthenticated);
-    console.log('Cart Items:', cartItems);
-    console.log('Total Amount:', totalAmount);
-
-    // Redirect to order confirmation or next step in the process
+   
   };
 
   return (
     <div>
-      <h2>Checkout</h2>
-      <DeliveryOption onSelectDelivery={handleSelectDelivery} />
+       <Title title={'CHECK OUT'}/>
+
       <div>
-        <h3>Shopping Cart</h3>
-        <ul>
-          {cartItems.map((item) => (
-            <li key={item.id}>{item.name} - ${item.price}</li>
-          ))}
-        </ul>
+        <h3>Shopping Cart</h3>  
+        <BillingForm />
+        <h1>Total Price {parseFloat(total)}</h1>
       </div>
-      <h2>Checkout</h2>
+      <h2>Place the order</h2>
       {isAuthenticated ? (
         <p>Logged in as a registered user</p>
       ) : (
         <p>Guest checkout - Login or continue as a guest</p>
       )}
-      
-      {!isAuthenticated && (
-        <button onClick={handleLogin}>Login</button>
-      )}
-      
 
-      <button onClick={handleCheckout}>Proceed to Checkout</button>
+      {!isAuthenticated && <button className="product-card" onClick={handleLogin}>Login</button>}
+
+      <button className="product-card" onClick={handleCheckout}>Login As Guest</button>
     </div>
   );
 };

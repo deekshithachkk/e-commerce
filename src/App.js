@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Route, Routes } from "react-router-dom";
 import Cart from "./components/Cart";
 import Checkout from "./components/CheckOut";
@@ -6,14 +6,25 @@ import Header from "./components/Header";
 import Home from "./components/Home";
 import ProductDetails from "./components/ProductDetails";
 import Wishlist from "./components/WishList";
+import SignUp from "./components/SignUp";
+import SignIn from "./components/SignIn";
+import AuthContext, { UserContext } from "./context/AuthContext";
 
 
 const App = () => {
+  const {users,setUsers,loginType,setLoginType,isLogged}=useContext(UserContext);
+ 
+  
   const [cartItems, setCartItems] = useState([]);
   const [wishlistItems, setWishlistItems] = useState([]);
+  
 
   const addToCart = (product) => {
-    setCartItems((prevItems) => [...prevItems, product]);
+    if(!cartItems.some((item)=>item.id==product.id))
+    {
+      setCartItems((prevItems) => [...prevItems, product]);
+    }
+    
   };
 
   const removeFromCart = (productId) => {
@@ -32,22 +43,14 @@ const App = () => {
     );
   };
 
-
-  const handleDecrementQuantity = (itemId) => {
-    setCartItems((prevItems) =>
-      prevItems.map((item) =>
-        item.id === itemId && item.qty > 1
-          ? { ...item, qty: item.qty - 1, total: (item.qty - 1) * item.price }
-          : item
-      )
-    );
-  };
-  const handleIncrementQuantity = (itemId) => {
-    console.log(itemId);
+ 
+  
+  const handleQuantity = (itemId,value) => {
+   
     setCartItems((prevItems) =>
       prevItems.map((item) =>
         item.id === itemId
-          ? { ...item, qty: item.qty + 1, total: ++item.qty * item.price }
+          ? { ...item, qty: value ,total: value * item.price }
           : item
       )
     );
@@ -55,14 +58,17 @@ const App = () => {
 
   return (
    
-    <div>
-      <Header count={cartItems.length}/>
-
+  <div>
+    
+    <Header count={cartItems.length}/>
       <Routes>
+     
+        
         <Route
           path="/"
           element={<Home addToCart={addToCart} addToWishlist={addToWishlist} />}
         />
+       
         <Route
           path="/product/:id"
           element={
@@ -78,8 +84,8 @@ const App = () => {
             <Cart
               cartItems={cartItems}
               removeFromCart={removeFromCart}
-              handleDecrementQuantity={handleDecrementQuantity}
-              handleIncrementQuantity={handleIncrementQuantity}
+              handleQuantity={handleQuantity}
+             
             />
           }
         />
@@ -89,10 +95,13 @@ const App = () => {
             <Wishlist
               wishlistItems={wishlistItems}
               removeFromWishlist={removeFromWishlist}
+              addToCart={addToCart}
             />
           }
         />
-        <Route path="/checkout" element={<Checkout />} />
+        <Route path="/checkout" element={<Checkout orderItems={cartItems}/>} />
+        <Route path="/signIn" element={<SignIn/>} />
+        <Route path="/signUp" element={<SignUp/>} />
       </Routes>
      
     </div>

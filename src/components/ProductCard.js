@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { FiShoppingCart, FiHeart, FiEye } from "react-icons/fi";
 
 const ProductCard = ({ product, addToCart, addToWishlist }) => {
-  const {name,price,id}=product
+  const { name, price, id } = product;
   return (
     <div className="product-card">
       <h3>{name}</h3>
@@ -21,9 +21,9 @@ const ProductCard = ({ product, addToCart, addToWishlist }) => {
           onClick={() => addToWishlist(product)}
         />
 
-        <FiEye className="icon" style={{ color: "blue" }} size={30}>
-          <Link to={`/product/${id}`}> </Link>
-        </FiEye>
+        <Link to={`/product/${id}`}>
+          <FiEye className="icon" style={{ color: "blue" }} size={30}></FiEye>
+        </Link>
       </div>
     </div>
   );

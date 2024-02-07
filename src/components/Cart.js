@@ -1,32 +1,67 @@
-// Cart.js
 
-import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
 
-const Cart = ({ cartItems, removeFromCart ,handleDecrementQuantity,handleIncrementQuantity}) => {
+import React from "react";
+import { FiTrash2 } from "react-icons/fi";
+import { useNavigate } from "react-router-dom";
+import Title from "./Title";
+
+const Cart = ({
+  cartItems,
+  removeFromCart,
+  handleQuantity,
+}) => {
+
   const navigate = useNavigate();
 
   const handleCheckout = () => {
-    navigate('/checkout');
+    navigate("/checkout");
   };
 
-  
   return (
-    <div className='product-card'>
-      <h2>Cart</h2>
-      
+    <div className="product-card">
+      <Title title={'CART'}/>
+
       <ul>
         {cartItems.map((item) => (
-          <li key={item.id}>
-            {/* <button className='dec' onClick={() => handleDecrementQuantity(item.id)}>-</button> */}
-            {item.name} -{item.qty} -${item.price}
-            <h5>Total:{item.total}</h5>
-            {/* <button className='inc' onClick={() => handleIncrementQuantity(item.id)}>+</button> */}
-            <button style={{backgroundColor:"red"}} onClick={() => removeFromCart(item.id)}>Remove</button>
-          </li>
+          <React.Fragment>
+            <li
+              key={item.id}
+              style={{
+                display: "flex",
+                justifyContent: "space-around",
+                borderBottom: "2px solid #ddd",
+                paddingTop: "2px",
+                alignItems: "center",
+              }}
+            >
+
+              <div>{item.name}</div>
+              <div>
+                {" "}
+                <input
+                  value={item.qty}
+                  type="text"
+                  onChange={(e) =>
+                    handleQuantity(item.id, e.target.value)
+                  }
+                />{" "}
+                x ${item.price} ={item.total}
+              </div>
+
+
+              <FiTrash2
+                size={30}
+                style={{ color: "red" }}
+                onClick={() => removeFromCart(item.id)}
+              >
+                Remove
+              </FiTrash2>
+            </li>
+          </React.Fragment>
         ))}
       </ul>
-      <button onClick={handleCheckout}>Next</button>
+      <h2>Total Price:{cartItems.reduce((acu, curr) => acu + curr.total, 0)}</h2>
+      {cartItems.length>0 &&<button onClick={handleCheckout}>Checkout</button>}
     </div>
   );
 };
