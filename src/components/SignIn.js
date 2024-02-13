@@ -42,7 +42,7 @@ const SignIn = () => {
       if(Array(userData?.users)?.filter((item)=>item?.email==formData.email && item?.password==formData.password).length>0)
       {
         alert("Order is Created SuccessFully")
-          setUserData({billingData:[],userData:[]})
+          setUserData({...userData,billingData:[]})
           setFormData({email:"",password:""})
       }
       else
