@@ -43,9 +43,9 @@ const Checkout = ({ orderItems }) => {
     }
    
   };
-
+  
   return (
-    <div>
+    orderItems.length>0 ?<div>
        <Title title={'CHECK OUT'}/>
 
       <div>
@@ -63,7 +63,7 @@ const Checkout = ({ orderItems }) => {
       {!isAuthenticated && <button className="product-card" onClick={handleLogin}>Login</button>}
 
       <button className="product-card" onClick={handleCheckout}>Login As Guest</button>
-    </div>
+    </div>:<Title title="No Item in the Cart"></Title>
   );
 };
 
