@@ -23,9 +23,8 @@ const Cart = ({
 
       <ul>
         {cartItems.map((item) => (
-          <React.Fragment>
+          <React.Fragment key={item.id}>
             <li
-              key={item.id}
               style={{
                 display: "flex",
                 justifyContent: "space-around",
